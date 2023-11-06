@@ -3,11 +3,18 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "watch": "mix watch",
+        "start": "php artisan serve"
     },
     "devDependencies": {
         "axios": "^1.1.2",
+        "cross-env": "^7.0.3",
+        "laravel-mix": "^6.0.49",
         "laravel-vite-plugin": "^0.8.0",
         "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.2"
     }
 }
