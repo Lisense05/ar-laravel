@@ -16,8 +16,8 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            
             @include('layouts.navigation')
-            @include('layouts.leftnavigation')
 
             <!-- Page Heading -->
             @if (isset($header))
@@ -30,8 +30,16 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                <div class="p-4 sm:ml-64">
+                    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+                        {{ $slot }}              
+                    </div>
+                </div>
+                
             </main>
         </div>
+        
     </body>
+    @include('footer.footer')
+    
 </html>
