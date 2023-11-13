@@ -3,10 +3,13 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start">
 
+
                 <a href="/home" class="flex ml-2 md:mr-24">
                     <img src="/img/ar.png" class="h-8 mr-3" alt="Ar Logo" />
                     <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">AR-Laravel</span>
                 </a>
+
+         
             </div>
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <x-dropdown align="right" width="48">
