@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/admin', [AdminController::class, 'index'])->middleware('is_admin')->name('admin');
+    Route::patch('/update-user/{user}', [AdminController::class, 'update'])->middleware('is_admin')->name('update.user');
+    Route::delete('/delete-user', [AdminController::class, 'delete'])->middleware('is_admin')->name('delete.user');
+    Route::post('/create-user', [AdminController::class, 'store'])->middleware('is_admin')->name('create.user');
 });
 
 require __DIR__.'/auth.php';

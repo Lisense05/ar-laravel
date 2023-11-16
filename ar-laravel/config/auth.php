@@ -60,15 +60,16 @@ return [
     */
 
     'providers' => [
-   /*      'users' => [
+        'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
-        ], */
+            'table' => 'laravel_users',
+        ], 
 
-        'users' => [
+       /*  'users' => [
             'driver' => 'database',
             'table' => 'laravel_users',
-        ],
+        ], */
     ],
 
     /*
