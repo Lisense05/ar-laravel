@@ -63,8 +63,8 @@
                         
                         <div class="ps-3">
                             
-                            <div class="text-base font-semibold">{{ $user->name }}</div>
-                            <div class="font-normal text-gray-500">{{ $user->email }}</div>
+                            <div class="text-base font-semibold user-name">{{ $user->name }}</div>
+                            <div class="font-normal text-gray-500 user-email">{{ $user->email }}</div>
                             
                         </div>
                     </th>
@@ -119,6 +119,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             const deleteButton = document.getElementById('admin_deletebutton');
             const checkboxes = document.querySelectorAll('.user-checkbox');
+            const searchInput = document.getElementById('table-search-users');
+
+            searchInput.addEventListener('input', handleSearch);
+
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
                     const anyCheckboxChecked = document.querySelector('.user-checkbox:checked');
@@ -150,6 +154,24 @@
 
                 });
             });
+
+            function handleSearch() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const name = row.querySelector('.user-name').textContent.toLowerCase();
+                    const email = row.querySelector('.user-email').textContent.toLowerCase();
+
+                    // Check if the row contains the search term
+                    if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+            }
+
         });
     </script>
 

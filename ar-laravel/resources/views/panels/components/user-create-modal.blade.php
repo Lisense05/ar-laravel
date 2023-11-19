@@ -62,4 +62,15 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('createUserModal');
+            
+            @if($errors->any())
+                modal.classList.remove('hidden');
+            @endif
+
+        });
+    </script>
 </div>
