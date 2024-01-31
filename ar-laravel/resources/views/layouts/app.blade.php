@@ -24,6 +24,7 @@
                 document.documentElement.classList.remove('dark')
             }
         </script>
+        
         <livewire:styles />
     </head>
     <body class="font-sans antialiased">
@@ -54,6 +55,7 @@
             </main>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.js"></script>
+        
         <livewire:scripts />
     </body>
     @include('footer.footer')

@@ -9,4 +9,19 @@ class Players extends Model
 {
     protected $table = 'users';
     use HasFactory;
+
+    protected $primaryKey = 'identifier';
+
+    public $incrementing = false;
+    
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'identifier',
+        'accounts',
+        'group'
+    ];
+
+
+    
 }
