@@ -22,6 +22,11 @@ class Players extends Model
         'group'
     ];
 
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicles::class, 'owner', 'identifier');
+    }
+
 
     
 }
