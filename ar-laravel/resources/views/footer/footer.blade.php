@@ -1,4 +1,4 @@
-<footer class="bg-gray-100 dark:bg-gray-700">
+<footer class="bg-gray-100 dark:bg-gray-700 w-full  bottom-0 z-50 absolute">
     <div class="w-auto mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
       <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">Ádám Bence © 2023 - All Rights Reserved.
     </span>

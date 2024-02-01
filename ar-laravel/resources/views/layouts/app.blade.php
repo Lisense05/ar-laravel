@@ -27,12 +27,11 @@
         
         <livewire:styles />
     </head>
-    <body class="font-sans antialiased">
-        
+    
+    <body class="font-sans antialiased relative">
+        @include('layouts.navigation')
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             
-            @include('layouts.navigation')
-
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white dark:bg-gray-800 shadow">
@@ -47,17 +46,21 @@
                 
                 <div class="p-4 sm:ml-64">
                     
-                    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+                    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14 mb-20">
                         {{ $slot }}              
                     </div>
                 </div>
                 
             </main>
+            
+            
         </div>
+        @include('footer.footer')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.js"></script>
         
         <livewire:scripts />
+        
     </body>
-    @include('footer.footer')
+    
     
 </html>
