@@ -146,9 +146,9 @@
                     const editForm = modal.querySelector('#edit-user-form');
                     const userEmail = link.getAttribute('data-user-email');
                     const isadmin = link.getAttribute('data-user-is_admin');
-                    const userId = link.getAttribute('data-user-id'); // Add this line to get the user ID
+                    const userId = link.getAttribute('data-user-id');
                     
-                    // Update modal content
+                    
                     const userNameInput = modal.querySelector('#name');
                     const userEmailInput = modal.querySelector('#email');
                     const isAdminInput = modal.querySelector('#is_admin');
@@ -170,11 +170,11 @@
                     const name = row.querySelector('.user-name').textContent.toLowerCase();
                     const email = row.querySelector('.user-email').textContent.toLowerCase();
 
-                    // Check if the row contains the search term
+                    
                     if (name.includes(searchTerm) || email.includes(searchTerm)) {
-                        row.style.display = ''; // Show the row
+                        row.style.display = '';
                     } else {
-                        row.style.display = 'none'; // Hide the row
+                        row.style.display = 'none'; 
                     }
                 });
             }
