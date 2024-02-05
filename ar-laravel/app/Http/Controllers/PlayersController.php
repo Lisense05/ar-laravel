@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PhoneTransactions;
 use App\Models\Players;
 use App\Models\Vehicles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Number;
 
 class PlayersController extends Controller
 {
@@ -34,7 +36,10 @@ class PlayersController extends Controller
                 'lastname',
                 'phone'
             )
-                ->withCount('vehicles')
+                ->with('vehicles')
+                ->with('contacts')
+                
+                
                 ->paginate(10);
             
             Cache::put($cacheKey, $players, now()->addMinutes(10));
@@ -42,10 +47,44 @@ class PlayersController extends Controller
             $fromCache = 'Database';
         }
 
-        $executionTime = (microtime(true) - $startTime) * 1000;
+        $players->each(function ($player) {
+            $transactionCountKey = 'transaction_counts_' . $player->identifier;
+            $phoneTransaction = 'phone_transaction_' . $player->identifier;
+            if(!Cache::has($transactionCountKey)) {
+                $depositCount = $player->transactionCountByType('deposit');
+                $withdrawalCount = $player->transactionCountByType('withdraw');
+                $transferCount = $player->transactionCountByType('transfer');
 
-        $executionTime =  number_format($executionTime, 2);
+                $transactionCounts = [
+                    'deposit' => $depositCount,
+                    'withdraw' => $withdrawalCount,
+                    'transfer' => $transferCount
+                ];
 
+                Cache::put($transactionCountKey, $transactionCounts, now()->addMinutes(10));
+            } 
+            if(!Cache::has($phoneTransaction)) {
+                $fromTransactions = PhoneTransactions::where('from', $player->identifier)->get();
+                $toTransactions = PhoneTransactions::where('to', $player->identifier)->get();
+
+                $fromAmountSum = Number::currency($fromTransactions->sum('amount'), 'USD');
+                $toAmountSum = Number::currency($toTransactions->sum('amount'), 'USD');
+
+                $phoneTransactionCounts = [
+                    'from' => [
+                        'count' => $fromTransactions->count(),
+                        'amount_sum' => $fromAmountSum,
+                    ],
+                    'to' => [
+                        'count' => $toTransactions->count(),
+                        'amount_sum' => $toAmountSum,
+                    ]
+                ];
+                Cache::put($phoneTransaction, $phoneTransactionCounts, now()->addMinutes(10));
+            }
+        });
+
+        $executionTime = number_format((microtime(true) - $startTime) * 1000, 2);
         return view('panels.players', compact('players', 'executionTime', 'fromCache'));
     }
 
@@ -69,11 +108,48 @@ class PlayersController extends Controller
             ->orWhere('job', 'like', "%$query%")
             ->orWhere('job_grade', 'like', "%$query%")
             ->orWhere('phone', 'like', "%$query%")
-            ->withCount('vehicles')
+            ->with('vehicles')
+            ->with('contacts')
+            
             ->paginate(10);
-            $executionTime = (microtime(true) - $startTime) * 1000;
+            
+        $players->each(function ($player) {
+            $transactionCountKey = 'transaction_counts_' . $player->identifier;
+            $phoneTransaction = 'phone_transaction_' . $player->identifier;
+            if(!Cache::has($transactionCountKey)) {
+                $depositCount = $player->transactionCountByType('deposit');
+                $withdrawalCount = $player->transactionCountByType('withdraw');
+                $transferCount = $player->transactionCountByType('transfer');
 
-            $executionTime =  number_format($executionTime, 2);
+                $transactionCounts = [
+                    'deposit' => $depositCount,
+                    'withdraw' => $withdrawalCount,
+                    'transfer' => $transferCount
+                ];
+
+                Cache::put($transactionCountKey, $transactionCounts, now()->addMinutes(10));
+            }
+            if(!Cache::has($phoneTransaction)) {
+                $fromTransactions = PhoneTransactions::where('from', $player->identifier)->get();
+                $toTransactions = PhoneTransactions::where('to', $player->identifier)->get();
+
+                $fromAmountSum = Number::currency($fromTransactions->sum('amount'), 'USD');
+                $toAmountSum = Number::currency($toTransactions->sum('amount'), 'USD');
+
+                $phoneTransactionCounts = [
+                    'from' => [
+                        'count' => $fromTransactions->count(),
+                        'amount_sum' => $fromAmountSum,
+                    ],
+                    'to' => [
+                        'count' => $toTransactions->count(),
+                        'amount_sum' => $toAmountSum,
+                    ]
+                ];
+                Cache::put($phoneTransaction, $phoneTransactionCounts, now()->addMinutes(10));
+            }
+        });
+        $executionTime = number_format((microtime(true) - $startTime) * 1000, 2);
         return view('panels.players', compact('players', 'executionTime', 'fromCache'));
     }
 }

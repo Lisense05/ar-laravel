@@ -1,5 +1,6 @@
 <x-app-layout>
-    <h2 class="text-3xl font-bold mt-4 mb-2 text-gray-800 dark:text-white flex justify-center">Page loaded from ({{$fromCache }}) {{$executionTime}} in MS</h2>
+    <h2 class="text-3xl font-bold mt-4 mb-2 text-gray-800 dark:text-white flex justify-center">Page loaded from
+        ({{ $fromCache }}) {{ $executionTime }} in MS</h2>
     <div class="flex flex-col">
         <div class="-m-1.5 overflow-x-auto">
             <div class="p-1.5 min-w-full inline-block align-middle">
@@ -75,12 +76,41 @@
                                         Vehicles
                                     </th>
 
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Deposits
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Withdraws
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Transfers
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Contacts
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Phone Transcation Sent
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Phone Transcation Received
+                                    </th>
+
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="players-tableBody">
                                 @foreach ($players as $player)
                                     <tr class ="hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        
+
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 player-identifier">
                                             {{ $player->identifier }}</td>
@@ -115,13 +145,39 @@
                                             {{ $player->phone }}</td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
-                                            {{ $player->vehicles_count }}</td>
+                                            {{ $player->vehicles->count() }}</td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['deposit'] }}</td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['withdraw'] }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['transfer'] }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ $player->contacts->count() }}</td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            Count: {{ Cache::get('phone_transaction_'.$player->identifier)['from']['count']}}<br> {{ Cache::get('phone_transaction_'.$player->identifier)['from']['amount_sum']}}</td>
+
+                                            <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            Count: {{ Cache::get('phone_transaction_'.$player->identifier)['to']['count']}}<br> {{ Cache::get('phone_transaction_'.$player->identifier)['to']['amount_sum']}}</td>
 
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                        
+
                     </div>
                     <div class="py-5 px-4">
                         {{ $players->appends(['query' => request()->input('query')])->links() }}
@@ -208,7 +264,7 @@
 
             searchInput.addEventListener('keyup', function(event) {
                 if (event.key === 'Backspace' && searchInput.value.trim() === '') {
-                    window.location.href = '/players'; 
+                    window.location.href = '/players';
                 }
             });
 
