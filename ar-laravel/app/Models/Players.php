@@ -51,5 +51,8 @@ class Players extends Model
             ->orWhere('to', $this->identifier);
     }
 
-    
+    public function lottery()
+    {
+        return $this->hasMany(Lottery::class, 'registerid', 'identifier');
+    }
 }

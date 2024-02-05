@@ -34,14 +34,20 @@ class PlayersController extends Controller
                 'job_grade',
                 'firstname',
                 'lastname',
-                'phone'
+                'phone',
+                'position',
+                'skin'
             )
                 ->with('vehicles')
                 ->with('contacts')
-                
-                
+                ->with('lottery')
                 ->paginate(10);
             
+            $players->transform(function ($player){
+                $player->accounts = json_decode($player->accounts, true);
+                return $player;
+            });
+
             Cache::put($cacheKey, $players, now()->addMinutes(10));
             error_log('From database');
             $fromCache = 'Database';
@@ -102,7 +108,6 @@ class PlayersController extends Controller
             ->orWhere('firstname', 'like', "%$query%")
             ->orWhere('lastname', 'like', "%$query%")
             ->orWhere('group', 'like', "%$query%")
-            ->orWhere('accounts', 'like', "%$query%")
             ->orWhere('permission_level', 'like', "%$query%")
             ->orWhere('inventory', 'like', "%$query%")
             ->orWhere('job', 'like', "%$query%")
@@ -112,6 +117,10 @@ class PlayersController extends Controller
             ->with('contacts')
             
             ->paginate(10);
+            $players->transform(function ($player){
+                $player->accounts = json_decode($player->accounts, true);
+                return $player;
+            });
             
         $players->each(function ($player) {
             $transactionCountKey = 'transaction_counts_' . $player->identifier;

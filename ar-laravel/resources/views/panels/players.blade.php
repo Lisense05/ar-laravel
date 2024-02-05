@@ -33,7 +33,17 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Accounts
+                                        Money
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Bank
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Black money
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Group
@@ -43,10 +53,19 @@
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Permission
                                     </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Position
+                                    </th>
 
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Inventory
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Skin
                                     </th>
 
                                     <th scope="col"
@@ -94,7 +113,10 @@
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Contacts
                                     </th>
-
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Lotteries
+                                    </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Phone Transcation Sent
@@ -116,7 +138,16 @@
                                             {{ $player->identifier }}</td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-accounts">
-                                            {{ $player->accounts }}
+                                            {{ Number::currency($player->accounts['money'], 'USD') }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-accounts">
+                                            {{ Number::currency($player->accounts['bank'], 'USD') }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-accounts">
+                                            {{ Number::currency($player->accounts['black_money'], 'USD') }}
                                         </td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-group">
@@ -126,7 +157,15 @@
                                             {{ $player->permission_level }}</td>
                                         <td
                                             class="inventory-cell px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 max-w-md overflow-x-scroll player-inventory">
+                                            {{ $player->position }}</td>
+                                        
+                                        <td
+                                            class="inventory-cell px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 max-w-md overflow-x-scroll player-inventory">
                                             {{ $player->inventory }}</td>
+
+                                        <td
+                                            class="inventory-cell px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 max-w-md overflow-x-scroll player-inventory">
+                                            {{ $player->skin }}</td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-job">
                                             {{ $player->job }}</td>
@@ -149,7 +188,8 @@
 
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
-                                            {{ Cache::get('transaction_counts_' . $player->identifier)['deposit'] }}</td>
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['deposit'] }}
+                                        </td>
 
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
@@ -164,14 +204,23 @@
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
                                             {{ $player->contacts->count() }}</td>
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ $player->lottery->count() }}</td>
 
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
-                                            Count: {{ Cache::get('phone_transaction_'.$player->identifier)['from']['count']}}<br> {{ Cache::get('phone_transaction_'.$player->identifier)['from']['amount_sum']}}</td>
+                                            Count:
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['from']['count'] }}<br>
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['from']['amount_sum'] }}
+                                        </td>
 
-                                            <td
+                                        <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
-                                            Count: {{ Cache::get('phone_transaction_'.$player->identifier)['to']['count']}}<br> {{ Cache::get('phone_transaction_'.$player->identifier)['to']['amount_sum']}}</td>
+                                            Count:
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['to']['count'] }}<br>
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['to']['amount_sum'] }}
+                                        </td>
 
                                     </tr>
                                 @endforeach
@@ -190,6 +239,7 @@
 
 
     <script>
+        
         document.addEventListener('DOMContentLoaded', function() {
             let timeoutId;
             var inventoryCells = document.querySelectorAll('.inventory-cell');
@@ -197,9 +247,12 @@
 
                 cell.addEventListener('click', function() {
 
+                    if (event.target.tagName.toLowerCase() === 'textarea') {
+                        event.stopPropagation();
+                        return;
+                    }
+
                     var existingTextarea = cell.querySelector('textarea');
-
-
                     if (existingTextarea) {
                         cell.textContent = existingTextarea.value.trim();
                         return;
