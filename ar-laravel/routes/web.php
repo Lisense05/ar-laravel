@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/players', [PlayersController::class, 'index'])->middleware('cache.playercount')->name('players');
     Route::get('/search', [PlayersController::class, 'search']);
+
+    Route::get('/players/{playerId}', [PlayersController::class, 'getPlayerInfo']);
     
 });
 

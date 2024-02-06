@@ -161,4 +161,15 @@ class PlayersController extends Controller
         $executionTime = number_format((microtime(true) - $startTime) * 1000, 2);
         return view('panels.players', compact('players', 'executionTime', 'fromCache'));
     }
+
+    public function getPlayerInfo($playerId)
+    {
+        $player = Players::find($playerId);
+        $vehicles = $player->vehicles()->paginate(5);
+        $transactions = $player->phoneTransactions()->paginate(5);
+        $contacts = $player->contacts()->paginate(5);
+        
+        return view('panels.players-moreinfo', compact('player', 'vehicles', 'transactions', 'contacts'));
+
+    }
 }

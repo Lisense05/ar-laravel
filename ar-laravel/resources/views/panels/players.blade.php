@@ -1,4 +1,5 @@
 <x-app-layout>
+    
     <h2 class="text-3xl font-bold mt-4 mb-2 text-gray-800 dark:text-white flex justify-center">Page loaded from
         ({{ $fromCache }}) {{ $executionTime }} in MS</h2>
     <div class="flex flex-col">
@@ -131,7 +132,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="players-tableBody">
                                 @foreach ($players as $player)
-                                    <tr class ="hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <tr class ="hover:bg-gray-50 dark:hover:bg-gray-600" data-identy={{$player->identifier}}>
 
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 player-identifier">
@@ -226,21 +227,32 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        
 
                     </div>
                     <div class="py-5 px-4">
                         {{ $players->appends(['query' => request()->input('query')])->links() }}
                     </div>
+                    
                 </div>
             </div>
         </div>
+        
     </div>
 
 
 
+
     <script>
-        
         document.addEventListener('DOMContentLoaded', function() {
+            
+            document.querySelectorAll('#players-table tr').forEach(row => {
+                row.addEventListener('click', function() {
+                    var playerId = this.dataset.identy;
+            
+                    window.location.href = `/players/${playerId}`;
+                });
+            });
             let timeoutId;
             var inventoryCells = document.querySelectorAll('.inventory-cell');
             inventoryCells.forEach(function(cell) {
