@@ -42,7 +42,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/players', [PlayersController::class, 'index'])->middleware('cache.playercount')->name('players');
     Route::get('/search', [PlayersController::class, 'search']);
 
-    Route::get('/players/{playerId}', [PlayersController::class, 'getPlayerInfo']);
+    Route::get('/players/{playerId}', [PlayersController::class, 'getPlayerInfo'])->name('playerInfo');
+
+    Route::get('/players/{playerId}/search-vehicles', [PlayersController::class, 'searchPlayerVehicles'])->name('searchPlayerVehicles');
+    Route::get('/players/{playerId}/search-contacts', [PlayersController::class, 'searchPlayerContacts'])->name('searchPlayerContacts');
+    Route::get('/players/{playerId}/search-phone', [PlayersController::class, 'searchPlayerPhoneTransactions'])->name('searchPlayerPhoneTransactions');
+    Route::get('/players/{playerId}/search-bank', [PlayersController::class, 'searchPlayerBankTransactions'])->name('searchPlayerBankTransactions');
+
+    
     
 });
 

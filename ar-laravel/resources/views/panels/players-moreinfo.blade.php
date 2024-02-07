@@ -84,6 +84,22 @@
                 <x-space-border/>
                 <div class="p-6 space-y-6">
                     <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Vehicles ({{$player->vehicles->count()}})</h1>
+                    <div class="relative max-w-xs">
+                        <label for="vehicles-search" class="sr-only">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-700 dark:text-gray-800" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input type="text" name="q" id="vehicles-search"
+                                class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Search for vehicles">
+                        </div>
+                    </div>
+                    
                     
                         @foreach ($vehicles as $vehicle)
                             <div class="border border-gray-200 rounded dark:border-gray-600 p-6">
@@ -121,7 +137,7 @@
                             
 
                         @endforeach
-                        {{ $vehicles->links()}}
+                        {{ $vehicles->withQueryString()->links()}}
 
                     
                 </div>
@@ -129,7 +145,21 @@
                 <x-space-border/>
                 <div class="p-6 space-y-6">
                     <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Contacts ({{$player->contacts->count()}})</h1>
-                    
+                        <div class="relative max-w-xs">
+                            <label for="contacts-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-700 dark:text-gray-800" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                </div>
+                                <input type="text" name="q" id="contacts-search"
+                                    class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Search for contacts">
+                            </div>
+                        </div>
                         @foreach ($contacts as $contact)
                             <div class="border border-gray-200 rounded dark:border-gray-600 p-6">
                                 <div class="grid grid-cols-9 gap-7 pb-10">
@@ -161,6 +191,21 @@
                         <div>
                             <h1 class="text-xl font-bold text-gray-900 dark:text-red-500">Sent: {{ Cache::get('phone_transaction_' . $player->identifier)['from']['amount_sum'] }}</h1>
                             <h1 class="text-xl font-bold text-gray-900 dark:text-green-500">Received: {{ Cache::get('phone_transaction_' . $player->identifier)['to']['amount_sum'] }}</h1>
+                        </div>
+                    </div>
+                    <div class="relative max-w-xs">
+                        <label for="phonetransaction-search" class="sr-only">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-700 dark:text-gray-800" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input type="text" name="q" id="phonetransaction-search"
+                                class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Search for phone transactions">
                         </div>
                     </div>
                     
@@ -201,7 +246,21 @@
                 <div class="p-6 space-y-6">
                     
                         <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Bank Transactions ({{$player->banktransactions->count()}})</h1>
-                    
+                        <div class="relative max-w-xs">
+                            <label for="bank-search" class="sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-700 dark:text-gray-800" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                </div>
+                                <input type="text" name="q" id="bank-search"
+                                    class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Search for bank transactions">
+                            </div>
+                        </div>
                     
                         @foreach ($banktransactions as $banktransaction)
                             <div class="border border-gray-200 rounded dark:border-gray-600 p-6">
@@ -255,5 +314,125 @@
                 </x-space-border>
             </form>
         </div>
-    
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let timeoutId;
+                var searchInput_v = document.getElementById('vehicles-search');
+                var searchInput_c = document.getElementById('contacts-search');
+                var searchInput_p = document.getElementById('phonetransaction-search');
+                var searchInput_b = document.getElementById('bank-search');
+
+
+                searchInput_b.addEventListener('input', function() {
+                    var inputValue = searchInput_b.value.trim();
+
+                    if (inputValue.length >= 3) {
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(function() {
+                            searchPlayerBankTransactions();
+                        }, 500);
+
+                    } else if (inputValue.length === 0) {
+                        window.location.href = "{{ route('playerInfo', $player->identifier) }}";
+                    } 
+                        
+                    
+                });
+
+                searchInput_p.addEventListener('input', function() {
+                    var inputValue = searchInput_p.value.trim();
+
+                    if (inputValue.length >= 3) {
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(function() {
+                            searchPlayerPhoneTransactions();
+                        }, 500);
+
+                    } else if (inputValue.length === 0) {
+                        window.location.href = "{{ route('playerInfo', $player->identifier) }}";
+                    } 
+                        
+                    
+                });
+
+                searchInput_c.addEventListener('input', function() {
+                    var inputValue = searchInput_c.value.trim();
+
+                    if (inputValue.length >= 3) {
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(function() {
+                            searchPlayerContacts();
+                        }, 500);
+
+                    } else if (inputValue.length === 0) {
+                        window.location.href = "{{ route('playerInfo', $player->identifier) }}";
+                    } 
+                        
+                    
+                });
+
+                searchInput_v.addEventListener('input', function() {
+                    var inputValue = searchInput_v.value.trim();
+
+                    if (inputValue.length >= 3) {
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(function() {
+                            searchPlayerVehicles();
+                        }, 500);
+
+                    } else if (inputValue.length === 0) {
+                        window.location.href = "{{ route('playerInfo', $player->identifier) }}";
+                    } 
+                        
+                    
+                });
+
+                function searchPlayerBankTransactions() {
+                    var inputValue = document.getElementById("bank-search").value.trim();
+                    var playerId = "{{ $player->identifier }}";
+                    var url = "{{ route('searchPlayerBankTransactions', ':playerId') }}";
+                    url = url.replace(':playerId', playerId) + '?bq=' + encodeURIComponent(inputValue);
+                    window.location.href = url;
+                }
+            
+                function searchPlayerPhoneTransactions() {
+                    var inputValue = document.getElementById("phonetransaction-search").value.trim();
+                    var playerId = "{{ $player->identifier }}";
+                    var url = "{{ route('searchPlayerPhoneTransactions', ':playerId') }}";
+                    url = url.replace(':playerId', playerId) + '?pq=' + encodeURIComponent(inputValue);
+                    window.location.href = url;
+                }
+
+                function searchPlayerContacts() {
+                    var inputValue = document.getElementById("contacts-search").value.trim();
+                    var playerId = "{{ $player->identifier }}";
+                    var url = "{{ route('searchPlayerContacts', ':playerId') }}";
+                    url = url.replace(':playerId', playerId) + '?cq=' + encodeURIComponent(inputValue);
+                    window.location.href = url;
+                }
+
+                function searchPlayerVehicles() {
+                    var inputValue = document.getElementById("vehicles-search").value.trim();
+                    var playerId = "{{ $player->identifier }}";
+                    var url = "{{ route('searchPlayerVehicles', ':playerId') }}";
+                    url = url.replace(':playerId', playerId) + '?vq=' + encodeURIComponent(inputValue);
+                    window.location.href = url;
+                }
+
+                window.addEventListener('load', function() {
+                    var queryParam = new URLSearchParams(window.location.search).get('vq');
+                    var cqueryParam = new URLSearchParams(window.location.search).get('cq');
+                    var pqueryParam = new URLSearchParams(window.location.search).get('pq');
+                    var bqueryParam = new URLSearchParams(window.location.search).get('bq');
+                    
+                    searchInput_c.value = cqueryParam ? cqueryParam : '';
+                    searchInput_v.value = queryParam ? queryParam : '';
+                    searchInput_p.value = pqueryParam ? pqueryParam : '';
+                    searchInput_b.value = bqueryParam ? bqueryParam : '';
+                    
+                });
+            });
+        </script>
+        
+
 </x-app-layout>

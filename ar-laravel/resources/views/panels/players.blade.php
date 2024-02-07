@@ -305,9 +305,8 @@
                 });
             });
 
+            
             var searchInput = document.getElementById('table-search-users');
-            var playersTable = document.getElementById('players-tableBody');
-
             searchInput.addEventListener('input', function() {
                 var inputValue = searchInput.value.trim();
 
