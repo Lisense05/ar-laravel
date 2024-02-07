@@ -121,11 +121,131 @@
                             
 
                         @endforeach
-                    {{$vehicles->links()}}
+                        {{ $vehicles->links()}}
+
+                    
+                </div>
+
+                <x-space-border/>
+                <div class="p-6 space-y-6">
+                    <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Contacts ({{$player->contacts->count()}})</h1>
+                    
+                        @foreach ($contacts as $contact)
+                            <div class="border border-gray-200 rounded dark:border-gray-600 p-6">
+                                <div class="grid grid-cols-9 gap-7 pb-10">
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="plate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Number</label>
+                                        <input type="text" name="plate" id="plate" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$contact->number}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="stored" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                                        <input type="text" name="stored" id="stored" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$contact->name}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Photo</label>
+                                        <input type="text" name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$contact->photo}}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        @endforeach
+                        {{ $contacts->links()}}
+                    
+                </div>
+
+                <x-space-border/>
+                <div class="p-6 space-y-6">
+                    <div class="flex justify-between">
+                        <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Phone Transactions ({{$player->phonetransactions->count()}})</h1>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900 dark:text-red-500">Sent: {{ Cache::get('phone_transaction_' . $player->identifier)['from']['amount_sum'] }}</h1>
+                            <h1 class="text-xl font-bold text-gray-900 dark:text-green-500">Received: {{ Cache::get('phone_transaction_' . $player->identifier)['to']['amount_sum'] }}</h1>
+                        </div>
+                    </div>
+                    
+                        @foreach ($phonetransactions as $phonetransaction)
+                            <div class="border border-gray-200 rounded dark:border-gray-600 p-6">
+                                <div class="grid grid-cols-9 gap-7 pb-10">
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="plate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">From</label>
+                                        <input type="text" disabled name="plate" id="plate" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$phonetransaction->from}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="stored" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">To</label>
+                                        <input type="text" disabled name="stored" id="stored" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 " value="{{$phonetransaction->to}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-1">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
+                                        <input type="text" name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$phonetransaction->amount}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-1">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Time</label>
+                                        <input type="text" disabled name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$phonetransaction->time}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-1">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reason</label>
+                                        <input type="text" name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$phonetransaction->reason}}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        @endforeach
+                        {{ $phonetransactions->links()}}
+                    
+                </div>
+
+
+                <x-space-border/>
+                <div class="p-6 space-y-6">
+                    
+                        <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Bank Transactions ({{$player->banktransactions->count()}})</h1>
+                    
+                    
+                        @foreach ($banktransactions as $banktransaction)
+                            <div class="border border-gray-200 rounded dark:border-gray-600 p-6">
+                                <div class="grid grid-cols-10 gap-7 pb-10">
+                                    <div class="col-span-6 sm:col-span-2">
+                                        <label for="plate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Receiver Identifier</label>
+                                        <input type="text" disabled name="plate" id="plate" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$banktransaction->receiver_identifier}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="stored" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Receiver Name</label>
+                                        <input type="text" disabled name="stored" id="stored" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 " value="{{$banktransaction->receiver_name}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-2">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sender Identifier</label>
+                                        <input type="text" disabled name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$banktransaction->sender_identifier}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sender Name</label>
+                                        <input type="text" disabled name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$banktransaction->sender_name}}">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-9 gap-6">
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
+                                        <input type="text" disabled name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$banktransaction->date}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Value</label>
+                                        <input type="text" disabled name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$banktransaction->value}}">
+                                    </div>
+                                    <div class="col-span-6 sm:col-span-3">
+                                        <label for="fav" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type</label>
+                                        <input type="text" disabled name="fav" id="fav" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{$banktransaction->type}}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        @endforeach
+                        {{ $banktransactions->links()}}
                     
                 </div>
                 
-                <!-- TODO: CONTACTS, TRANSACTIONS, SAVE-->
+                <!-- TODO:  TRANSACTIONS, SAVE-->
 
                 <!-- Modal footer -->
                 <x-space-border>
