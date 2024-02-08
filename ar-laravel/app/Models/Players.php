@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Players extends Model
 {
+    public $timestamps = false;
+
     protected $table = 'users';
     use HasFactory;
 

@@ -61,6 +61,29 @@ class PlayersController extends Controller
     }
 
 
+    public function update(Request $request, $playerId)
+    {
+        $player = Players::findOrFail($playerId);
+        $player->group = $request->input('group');
+        $player->permission_level = $request->input('permission');
+        $player->job = $request->input('job');
+        $player->job_grade = $request->input('job_grade');
+        $player->phone = $request->input('phone');
+        $player->position = $request->input('position');
+        $player->skin = $request->input('skin');
+        $player->firstname = $request->input('firstname');
+        $player->lastname = $request->input('lastname');
+        $player->inventory = $request->input('inventory');
+        $player->accounts = $request->input('account');
+
+        $player->save();
+
+        Cache::forget('player_info_' . $playerId);
+
+        return redirect()->back()->with('success', 'Player updated successfully');
+
+    }
+
     public function search(Request $request)
     {
         //TODO: Add cache for overall search asnyc query for ALl Players

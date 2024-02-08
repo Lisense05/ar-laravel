@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/players/{playerId}/search-phone', [PlayersController::class, 'searchPlayerPhoneTransactions'])->name('searchPlayerPhoneTransactions');
     Route::get('/players/{playerId}/search-bank', [PlayersController::class, 'searchPlayerBankTransactions'])->name('searchPlayerBankTransactions');
 
+    Route::put('/players/{playerId}', [PlayersController::class, 'update'])->name('players.update');
+
     
     
 });
