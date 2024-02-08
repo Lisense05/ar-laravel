@@ -330,7 +330,7 @@
                         clearTimeout(timeoutId);
                         timeoutId = setTimeout(function() {
                             searchPlayerBankTransactions();
-                        }, 500);
+                        }, 1000);
 
                     } else if (inputValue.length === 0) {
                         window.location.href = "{{ route('playerInfo', $player->identifier) }}";
@@ -346,7 +346,7 @@
                         clearTimeout(timeoutId);
                         timeoutId = setTimeout(function() {
                             searchPlayerPhoneTransactions();
-                        }, 500);
+                        }, 1000);
 
                     } else if (inputValue.length === 0) {
                         window.location.href = "{{ route('playerInfo', $player->identifier) }}";
@@ -362,7 +362,7 @@
                         clearTimeout(timeoutId);
                         timeoutId = setTimeout(function() {
                             searchPlayerContacts();
-                        }, 500);
+                        }, 1000);
 
                     } else if (inputValue.length === 0) {
                         window.location.href = "{{ route('playerInfo', $player->identifier) }}";
@@ -378,7 +378,7 @@
                         clearTimeout(timeoutId);
                         timeoutId = setTimeout(function() {
                             searchPlayerVehicles();
-                        }, 500);
+                        }, 1000);
 
                     } else if (inputValue.length === 0) {
                         window.location.href = "{{ route('playerInfo', $player->identifier) }}";

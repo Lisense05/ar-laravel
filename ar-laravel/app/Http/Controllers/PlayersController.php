@@ -96,36 +96,77 @@ class PlayersController extends Controller
 
     public function getPlayerInfo($playerId)
     {
-        //TODO: Add cache for player info
-        $player = Players::find($playerId);
-        $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-        $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-        $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-        $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-        $this->cacheCreate(collect([$player]));
-        error_log('LOADING');
-        return view('panels.players-moreinfo', compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions'));
+        $startTime = microtime(true);
+        $cacheKey = 'player_info_' . $playerId;
+        $cache = 'DB';
+        if(Cache::has($cacheKey)) {
+            $cachedData = Cache::get($cacheKey);
+            $cache = 'CACHE';
+        } else {
+
+            $player = Players::find($playerId);
+            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
+            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
+            $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
+
+            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
+            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
+            
+        }
+        $this->cacheCreate(collect([$cachedData['player']]));
+        
+        error_log('Main load '.$cache.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
+        return view('panels.players-moreinfo', $cachedData);
 
     }
+
+
 
 
     public function searchPlayerBankTransactions(Request $request, $playerId)
     {
-        $player = Players::find($playerId);
+        $startTime = microtime(true);
+        $cacheKey = 'player_info_' . $playerId;
         $query = $request->input('bq');
-        $banktransactions = $player->bankTransactions()
-            ->where('type', 'like', '%'.$query.'%')
-            ->orWhere('date', 'like', '%'.$query.'%')
-            ->orWhere('receiver_identifier', 'like', '%'.$query.'%')
-            ->orWhere('sender_identifier', 'like', '%'.$query.'%')
-            ->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-        $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-        $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-        $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-        $this->cacheCreate(collect([$player]));
-        error_log('LOADING Search');
-        return view('panels.players-moreinfo', compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions'));
+        $test = 'DB';
+
+        if(Cache::has($cacheKey)) {
+            
+            $cachedData = Cache::get($cacheKey);
+            $banktransactions = $cachedData['player']->bankTransactions();
+
+            $banktransactions = $banktransactions->where(function ($queryBuilder) use ($query) {
+                $queryBuilder->where('type', 'like', '%' . $query . '%');
+            });
+
+            
+
+            $cachedData['banktransactions'] = $banktransactions->paginate(5, ['*'], 'banktransactions')
+            ->appends(request()->except('banktransactions'));
+            
+            $test='CACHE';
+        } else {
+            $player = Players::find($playerId);
+            $banktransactions = $player->bankTransactions()
+                ->where('type', 'like', '%'.$query.'%')
+                ->orWhere('date', 'like', '%'.$query.'%')
+                ->orWhere('receiver_identifier', 'like', '%'.$query.'%')
+                ->orWhere('sender_identifier', 'like', '%'.$query.'%')
+                ->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
+            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
+            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
+            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+
+            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
+
+            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
+        }
+        $this->cacheCreate(collect([$cachedData['player']]));
+        error_log($test.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
+        return view('panels.players-moreinfo', $cachedData);
     }
+
 
     public function searchPlayerPhoneTransactions(Request $request, $playerId)
     {
@@ -135,7 +176,7 @@ class PlayersController extends Controller
             ->where('from', 'like', '%'.$query.'%')
             ->orWhere('to', 'like', '%'.$query.'%')
             ->orWhere('time', 'like', '%'.$query.'%')
-            ->paginate(5, ['*'], 'contacts')->appends(request()->except('phonetransactions'));
+            ->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
         $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
         $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
         $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
@@ -147,40 +188,79 @@ class PlayersController extends Controller
     public function searchPlayerContacts(Request $request, $playerId)
     {
 
-        $player = Players::find($playerId);
+        $startTime = microtime(true);
+        $cacheKey = 'player_info_' . $playerId;
         $query = $request->input('cq');
-        $contacts = $player->contacts()
+        $test = 'DB';
+        if(Cache::has($cacheKey)) {
+            $cachedData = Cache::get($cacheKey);
+            $contacts = $cachedData['player']->contacts();
+            $contacts = $contacts->where(function ($queryBuilder) use ($query) {
+                $queryBuilder->where('number', 'like', '%' . $query . '%')
+                    ->orWhere('name', 'like', '%' . $query . '%');
+            });
+            $cachedData['contacts'] = $contacts->paginate(5, ['*'], 'contacts')
+                ->appends(request()->except('contacts'));
+
+            $test = 'CACHE';
+        } else {
+            $player = Players::find($playerId);
+            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
+            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
+            $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
+            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
+            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
+            $cachedData['contacts'] = $player->contacts()
             ->where('number', 'like', '%'.$query.'%')
             ->orWhere('name', 'like', '%'.$query.'%')
             ->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-        $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-        $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-        $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-        $this->cacheCreate(collect([$player]));
-        error_log('LOADING Search');
-        return view('panels.players-moreinfo', compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions'));
+        }
+        $this->cacheCreate(collect([$cachedData['player']]));
+        error_log($test.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
+        return view('panels.players-moreinfo', $cachedData);
     }
 
 
     public function searchPlayerVehicles(Request $request, $playerId)
     {
-        //TODO: Use player info cache
-        $player = Players::find($playerId);
+        $startTime = microtime(true);
+        $cacheKey = 'player_info_' . $playerId;
         $query = $request->input('vq');
-        $vehicles = $player->vehicles()
-            ->where('plate', 'like', '%'.$query.'%')
-            ->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-        $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-        $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-        $this->cacheCreate(collect([$player]));
-        error_log('LOADING Search');
-        return view('panels.players-moreinfo', compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions'));
+        $test = 'DB';
+
+        if(Cache::has($cacheKey)) {
+            $cachedData = Cache::get($cacheKey);
+            $vehicles = $cachedData['player']->vehicles();
+            $vehicles = $vehicles->where('plate', 'like', '%' . $query . '%');
+            $cachedData['vehicles'] = $vehicles->paginate(5, ['*'], 'vehicles')
+                ->appends(request()->except('vehicles'));
+            $test = 'CACHE';
+
+        } else {
+            $player = Players::find($playerId);
+            $cachedData = $this->playerInfoCache($player, $cacheKey);
+
+            $cachedData['vehicles'] = $player->vehicles()
+                ->where('plate', 'like', '%'.$query.'%')
+                ->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+        }
+        $this->cacheCreate(collect([$cachedData['player']]));
+        error_log($test.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
+        return view('panels.players-moreinfo', $cachedData);
     }
 
 
 
-
+    private function playerInfoCache($player, $cacheKey) {
+        $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+        $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
+        $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
+        $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
+        $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
+        Cache::put($cacheKey ,$cachedData, now()->addMinutes(10));
+        return $cachedData;
+    }
 
     private function cacheCreate($players) {
         $players->each(function ($player) {
