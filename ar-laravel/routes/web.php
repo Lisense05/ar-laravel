@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminStatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\ProfileController;
@@ -50,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/players/{playerId}/search-bank', [PlayersController::class, 'searchPlayerBankTransactions'])->name('searchPlayerBankTransactions');
 
     Route::put('/players/{playerId}', [PlayersController::class, 'update'])->name('players.update');
+
+    Route::get('/adminstat', [AdminStatController::class, 'index'])->name('adminstat');
 
     
     

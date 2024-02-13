@@ -305,8 +305,9 @@
                 });
             });
 
-            
             var searchInput = document.getElementById('table-search-users');
+
+
             searchInput.addEventListener('input', function() {
                 var inputValue = searchInput.value.trim();
 

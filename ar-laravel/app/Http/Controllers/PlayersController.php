@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PreLoadCache;
 use App\Models\PhoneTransactions;
 use App\Models\Players;
 use App\Models\Vehicles;
@@ -14,10 +15,13 @@ class PlayersController extends Controller
 {
     public function index()
     {
+        
+
         $startTime = microtime(true);
         $page = request()->get('page', 1);
+        error_log('Page: '.$page);
         $cacheKey = 'players_page_' . $page;
-        $fromCache = 'Cache';
+        $fromCache = 'Database';
 
         if (Cache::has($cacheKey)) {
             $players = Cache::get($cacheKey);
@@ -51,7 +55,7 @@ class PlayersController extends Controller
 
             Cache::put($cacheKey, $players, now()->addMinutes(10));
             error_log('From database');
-            $fromCache = 'Database';
+            
         }
 
         $this->cacheCreate($players);
