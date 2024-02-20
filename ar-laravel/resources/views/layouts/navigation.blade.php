@@ -5,7 +5,7 @@
 
                 <a href="/home" class="flex ml-2 md:mr-24">
                     <img src="/img/ar.png" class="h-8 mr-3" alt="Ar Logo" />
-                    <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">AR-Laravel</span>
+                    @livewire('header-counter')
                 </a>
             </div>
             
