@@ -11,4 +11,11 @@ class PhoneTransactions extends Model
 
     protected $table = 'phone_transactions';
     protected $primaryKey = 'id';
+
+    public function scopeRelatedToPlayer($query, $playerId)
+    {
+        return $query->where('from', $playerId)
+                    ->orWhere('to', $playerId); 
+    }
+
 }

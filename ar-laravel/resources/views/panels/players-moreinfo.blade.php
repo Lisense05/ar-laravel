@@ -25,7 +25,8 @@
             @method('PUT')
 
             <!-- Modal header -->
-            <div id="moreInfoHeader" class="flex items-center justify-center p-4 border-b rounded-t dark:border-gray-600">
+            <div id="moreInfoHeader"
+                class="flex items-center justify-center p-4 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Info Panel [{{ $player->identifier }}]
                 </h3>
@@ -48,7 +49,7 @@
                         <input type="text" name="group" id="group"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value ="{{ $player->group }}">
-                            <x-input-error :messages="$errors->get('group')" class="mt-2" id="groupError" />
+                        <x-input-error :messages="$errors->get('group')" class="mt-2" id="groupError" />
                     </div>
 
                     <div class="col-span-6 sm:col-span-1">
@@ -58,7 +59,7 @@
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value="{{ $player->permission_level }}">
 
-                            <x-input-error :messages="$errors->get('permission')" class="mt-2" id="permissionError" />
+                        <x-input-error :messages="$errors->get('permission')" class="mt-2" id="permissionError" />
                     </div>
 
                     <div class="col-span-6 sm:col-span-1">
@@ -75,7 +76,7 @@
                         <input type="text" name="job_grade" id="job_grade"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value="{{ $player->job_grade }}">
-                            <x-input-error :messages="$errors->get('job_grade')" class="mt-2" id="job_gradeError" />
+                        <x-input-error :messages="$errors->get('job_grade')" class="mt-2" id="job_gradeError" />
                     </div>
 
 
@@ -101,7 +102,7 @@
                         <input type="text" name="phone" id="phone"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value="{{ $player->phone }}">
-                            <x-input-error :messages="$errors->get('phone')" class="mt-2" id="phoneError" />
+                        <x-input-error :messages="$errors->get('phone')" class="mt-2" id="phoneError" />
                     </div>
                     <div class="col-span-6 sm:col-span-2">
                         <label for="position"
@@ -109,24 +110,26 @@
                         <input type="text" name="position" id="position"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value="{{ $player->position }}">
-                            <x-input-error :messages="$errors->get('position')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('position')" class="mt-2" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-6 gap-6">
                     <div class="col-span-6 sm:col-span-3">
-                        <label for="inventory" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raw Inventory</label>
-                        <textarea id="inventory" name="inventory" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">{{ $player->inventory }}</textarea>
+                        <label for="inventory"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raw Inventory</label>
+                        <textarea id="inventory" name="inventory" rows="4"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">{{ $player->inventory }}</textarea>
                         <x-input-error :messages="$errors->get('inventory')" class="mt-2" id="inventoryError" />
                     </div>
-                    
+
                     <div class="col-span-6 sm:col-span-3">
                         <label for="account" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raw
                             Account</label>
                         <input type="text" name="account" id="account"
                             class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value="{{ $player->accounts }}">
-                            <x-input-error :messages="$errors->get('account')" class="mt-2" id="accountError"/>
+                        <x-input-error :messages="$errors->get('account')" class="mt-2" id="accountError" />
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <label for="skin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Raw
@@ -137,16 +140,16 @@
                     </div>
                 </div>
                 <x-space-border>
-                    
+
                     <button type="submit"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
                 </x-space-border>
-            </div>    
+            </div>
         </form>
-        
+
         <x-space-border />
 
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">    
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">
             <div class="p-6 space-y-6">
                 <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Vehicles
                     ({{ $player->vehicles->count() }})</h1>
@@ -226,8 +229,8 @@
             </div>
         </div>
         <x-space-border />
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">    
-            
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">
+
             <div class="p-6 space-y-6">
                 <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Contacts
                     ({{ $player->contacts->count() }})</h1>
@@ -279,7 +282,7 @@
             </div>
         </div>
         <x-space-border />
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">    
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">
             <div class="p-6 space-y-6">
                 <div class="flex justify-between">
                     <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Phone Transactions
@@ -353,10 +356,10 @@
 
             </div>
         </div>
-        
+
         <x-space-border />
 
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">    
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700 mb-5">
             <div class="p-6 space-y-6">
                 <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">Player Bank Transactions
                     ({{ $player->banktransactions->count() }})</h1>
@@ -442,7 +445,7 @@
 
             </div>
         </div>
-        
+
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -559,6 +562,32 @@
                 searchInput_v.value = queryParam ? queryParam : '';
                 searchInput_p.value = pqueryParam ? pqueryParam : '';
                 searchInput_b.value = bqueryParam ? bqueryParam : '';
+                
+                if (cqueryParam) {
+                    
+                    searchInput_c.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                } else if (queryParam) {
+                    
+                    searchInput_v.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                } else if (pqueryParam) {
+                
+                    searchInput_p.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                } else if (bqueryParam) {
+                
+                    searchInput_b.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
 
             });
         });
