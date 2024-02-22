@@ -9,7 +9,7 @@
                     $minutes = $totalMinutes % 60;
                 @endphp
                 <dt class="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">All duty time</dt>
-                <dd class="leading-none text-3xl font-bold text-gray-900 dark:text-white">{{ $sumMinutes }} total
+                <dd id="allDutyTime" class="leading-none text-3xl font-bold text-gray-900 dark:text-white">{{ $sumMinutes }} total
                     minutes
                     ({{ $days }} days, {{ $hours }} hours, {{ $minutes }} minutes )</dd>
             </dl>
@@ -18,11 +18,11 @@
         <div class="grid grid-cols-2 py-3">
             <dl>
                 <dt class="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">Start date</dt>
-                <dd class="leading-none text-xl font-bold text-green-500 dark:text-green-400">{{ $startDate }}</dd>
+                <dd id="startDate" class="leading-none text-xl font-bold text-green-500 dark:text-green-400">{{ $startDate }}</dd>
             </dl>
             <dl>
                 <dt class="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">End date</dt>
-                <dd class="leading-none text-xl font-bold text-red-600 dark:text-red-500">{{ $endDate }}</dd>
+                <dd id="endDate" class="leading-none text-xl font-bold text-red-600 dark:text-red-500">{{ $endDate }}</dd>
             </dl>
         </div>
 

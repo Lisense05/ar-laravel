@@ -15,7 +15,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('fetch:server-data')
             ->onOneServer()
-            ->withoutOverlapping()
             ->runInBackground()
             ->everyThirtySeconds();
     }

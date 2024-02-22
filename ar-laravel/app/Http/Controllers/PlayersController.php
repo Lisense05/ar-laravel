@@ -68,17 +68,48 @@ class PlayersController extends Controller
     public function update(Request $request, $playerId)
     {
         $player = Players::findOrFail($playerId);
-        $player->group = $request->input('group');
-        $player->permission_level = $request->input('permission');
+
+        if($request->phone !== $player->phone) {
+            $phoneValidation = [
+                'required',
+                'string',
+                'regex:/^\d{3}-\d{4}$/',
+                'unique:'.Players::class
+            ];
+        } else {
+            $phoneValidation = [
+                'required',
+                'string',
+                'regex:/^\d{3}-\d{4}$/',
+            ];
+        }
+
+        $request->validate([
+            
+            'permission' => ['required', 'integer', 'between:0,13'],
+            'group' => ['required', 'string', 'in:user,admin,superadmin'],
+            'phone' => $phoneValidation,
+            'job_grade' => ['required', 'integer', 'max:2'],
+            'inventory' => ['required','json'],
+            'account' => ['required', 'json'],
+            'skin' => ['required', 'json'],
+            'position' => ['required', 'json'],
+            
+        ]);
+
+
+
+        $player->group = $request->group;
+        $player->permission_level = $request->permission;
         $player->job = $request->input('job');
-        $player->job_grade = $request->input('job_grade');
-        $player->phone = $request->input('phone');
-        $player->position = $request->input('position');
-        $player->skin = $request->input('skin');
+        $player->job_grade = $request->job_grade;
+        $player->phone = $request->phone;
+        $player->position = $request->position;
+        $player->skin = $request->skin;
         $player->firstname = $request->input('firstname');
         $player->lastname = $request->input('lastname');
-        $player->inventory = $request->input('inventory');
-        $player->accounts = $request->input('account');
+        $player->inventory = $request->inventory;
+        $player->accounts = $request->account;
 
         $player->save();
 
@@ -90,6 +121,12 @@ class PlayersController extends Controller
 
     public function search(Request $request)
     {
+        if(Cache::has('players_cache')) {
+            error_log('VAN CACHE');
+        } else {
+            error_log('NINCS CACHE');
+        }
+
         //TODO: Add cache for overall search asnyc query for ALl Players
         $startTime = microtime(true);
         $page = request()->get('page', 1);
