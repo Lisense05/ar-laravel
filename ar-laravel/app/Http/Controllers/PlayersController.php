@@ -8,6 +8,7 @@ use App\Models\PhoneTransactions;
 use App\Models\Players;
 use App\Models\Vehicles;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
@@ -170,18 +171,12 @@ class PlayersController extends Controller
         } else {
 
             $player = Players::find($playerId);
-            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-            $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-
-            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
-            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
-            
+            $cachedData = $this->playerInfoCache($player, $cacheKey);
         }
+        $cachedData = $this->paginateCreate($cachedData);
         $this->cacheCreate(collect([$cachedData['player']]));
         
-        error_log('Main load '.$cache.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
+        error_log('Main load '.$cache.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
         return view('panels.players-moreinfo', $cachedData);
 
     }
@@ -195,25 +190,35 @@ class PlayersController extends Controller
         $cacheKey = 'player_info_' . $playerId;
         $query = $request->input('bq');
         $test = 'DB';
+
         if(Cache::has($cacheKey)) {
             $test='CACHE';
             $cachedData = Cache::get($cacheKey);
-        } else {
+
+        } else { 
             $player = Players::find($playerId);
-            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-            $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
-            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
+            $cachedData = $this->playerInfoCache($player, $cacheKey);
         }
         
-        $banktransactions = BankTransactions::relatedToPlayer($playerId, $query)
-        ->paginate(5, ['*'], 'banktransactions')
-        ->appends(request()->except('banktransactions'));
+        if($query !== null) { 
+            $banktransactions = $cachedData['banktransactions'];
 
-        $cachedData['banktransactions'] = $banktransactions;
-        
+            $banktransactions = $banktransactions->toQuery()->where(function ($queryBuilder) use ($query) {
+                $queryBuilder->where('receiver_name', 'like', '%' . $query . '%')
+                    ->orWhere('sender_name', 'like', '%' . $query . '%')
+                    ->orWhere('type', 'like', '%' . $query . '%')
+                    ->orWhere('date', 'like', '%' . $query . '%');
+            });
+            $toCache = $banktransactions->paginate(5, ['*'], 'banktransactions')
+            ->appends(request()->except('banktransactions'));
+            
+
+            $cachedData = $this->paginateCreate($cachedData);
+            $cachedData['banktransactions'] = $toCache;
+        } else {
+            $cachedData = $this->paginateCreate($cachedData);
+        }
+                
         $this->cacheCreate(collect([$cachedData['player']]));
         error_log($test.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
         return view('panels.players-moreinfo', $cachedData);
@@ -226,25 +231,25 @@ class PlayersController extends Controller
         $cacheKey = 'player_info_' . $playerId;
         $query = $request->input('pq');
         $test = 'DB';
+
         if(Cache::has($cacheKey)) {
             $test='CACHE';
             $cachedData = Cache::get($cacheKey);
-        } else {
+
+        } else { 
             $player = Players::find($playerId);
-            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-            $phonetransactions = $player->phonetransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-            $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
-            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
+            $cachedData = $this->playerInfoCache($player, $cacheKey);
         }
 
+        if($query !== null) { 
+            $phonetransactions = $cachedData['phonetransactions'];
+            $toCache = $phonetransactions->toQuery()->where('time', 'like', '%' . $query . '%')->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
+            $cachedData = $this->paginateCreate($cachedData);
+            $cachedData['phonetransactions'] = $toCache;
+        } else {
+            $cachedData = $this->paginateCreate($cachedData);
+        }
 
-        $phonetransactions = PhoneTransactions::relatedToPlayer($playerId)
-        ->where('time', 'like', '%' . $query . '%')
-        ->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-        $cachedData['phonetransactions'] = $phonetransactions;
-        
         $this->cacheCreate(collect([$cachedData['player']]));
         error_log($test.' ' . number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
         return view('panels.players-moreinfo', $cachedData);
@@ -258,30 +263,35 @@ class PlayersController extends Controller
         $cacheKey = 'player_info_' . $playerId;
         $query = $request->input('cq');
         $test = 'DB';
+
         if(Cache::has($cacheKey)) {
+            $test='CACHE';
             $cachedData = Cache::get($cacheKey);
-            $contacts = $cachedData['player']->contacts();
-            $contacts = $contacts->where(function ($queryBuilder) use ($query) {
+
+        } else { 
+            $player = Players::find($playerId);
+            $cachedData = $this->playerInfoCache($player, $cacheKey);
+            $cachedData = $this->paginateCreate($cachedData);
+            
+        }
+
+        if($query !== null) {
+
+            $contacts = $cachedData['contacts'];
+
+            $contacts = $contacts->toQuery()->where(function ($queryBuilder) use ($query) {
                 $queryBuilder->where('number', 'like', '%' . $query . '%')
                     ->orWhere('name', 'like', '%' . $query . '%');
             });
-            $cachedData['contacts'] = $contacts->paginate(5, ['*'], 'contacts')
-                ->appends(request()->except('contacts'));
-
-            $test = 'CACHE';
+            $toCache = $contacts->paginate(5, ['*'], 'contacts')
+            ->appends(request()->except('contacts'));
+            
+            $cachedData = $this->paginateCreate($cachedData);
+            $cachedData['contacts'] = $toCache;
         } else {
-            $player = Players::find($playerId);
-            $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-            $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-            $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-            $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
-            $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
-            Cache::put($cacheKey, $cachedData, now()->addMinutes(10));
-            $cachedData['contacts'] = $player->contacts()
-            ->where('number', 'like', '%'.$query.'%')
-            ->orWhere('name', 'like', '%'.$query.'%')
-            ->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
+            $cachedData = $this->paginateCreate($cachedData);
         }
+
         $this->cacheCreate(collect([$cachedData['player']]));
         error_log($test.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
         return view('panels.players-moreinfo', $cachedData);
@@ -296,33 +306,106 @@ class PlayersController extends Controller
         $test = 'DB';
 
         if(Cache::has($cacheKey)) {
+            $test='CACHE';
             $cachedData = Cache::get($cacheKey);
-            $vehicles = $cachedData['player']->vehicles();
-            $vehicles = $vehicles->where('plate', 'like', '%' . $query . '%');
-            $cachedData['vehicles'] = $vehicles->paginate(5, ['*'], 'vehicles')
-                ->appends(request()->except('vehicles'));
-            $test = 'CACHE';
-
-        } else {
+        } else { 
             $player = Players::find($playerId);
             $cachedData = $this->playerInfoCache($player, $cacheKey);
-
-            $cachedData['vehicles'] = $player->vehicles()
-                ->where('plate', 'like', '%'.$query.'%')
-                ->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+            $cachedData = $this->paginateCreate($cachedData);
+            
         }
+        if($query !== null) {
+            $vehicles = $cachedData['vehicles'];
+            $toCache= $vehicles->toQuery()->where('plate', 'like', '%'.$query.'%')->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+            $cachedData = $this->paginateCreate($cachedData);
+            $cachedData['vehicles'] = $toCache;
+        } else {
+            $cachedData = $this->paginateCreate($cachedData);
+        }
+
+
         $this->cacheCreate(collect([$cachedData['player']]));
         error_log($test.' '.number_format((microtime(true) - $startTime) * 1000, 2) . 'ms');
         return view('panels.players-moreinfo', $cachedData);
     }
 
+    private function paginateCreate($cachedData) 
+    {
+        $vehiclepage = request()->input('vehicles', 1);
+        $contactspage = request()->input('contacts', 1);
+        $banktransactionspage = request()->input('banktransactions', 1);
+        $phonetransactionspage = request()->input('phonetransactions', 1);
 
+
+        $perPage = 5;
+
+        $vehicles = $cachedData['vehicles']->slice(($vehiclepage - 1) * $perPage, $perPage);
+        $vehiclesPaginator = new LengthAwarePaginator(
+            $vehicles,
+            $cachedData['vehicles']->count(),
+            $perPage,
+            $vehiclepage,
+            [
+                'path' => request()->url(),
+                'query' => request()->except('vehicles') 
+            ]
+        );
+        $vehiclesPaginator->appends(request()->except('vehicles'))->setPageName('vehicles');
+
+        $contacts = $cachedData['contacts']->slice(($contactspage - 1) * $perPage, $perPage);
+        $contactsPaginator = new LengthAwarePaginator(
+            $contacts,
+            $cachedData['contacts']->count(),
+            $perPage,
+            $contactspage,
+            [
+                'path' => request()->url(),
+                'query' => request()->except('contacts') 
+            ]
+        );
+        $contactsPaginator->appends(request()->except('contacts'))->setPageName('contacts');
+
+        $banktransactions = $cachedData['banktransactions']->slice(($banktransactionspage - 1) * $perPage, $perPage);
+        $banktransactionsPaginator = new LengthAwarePaginator(
+            $banktransactions,
+            $cachedData['banktransactions']->count(),
+            $perPage,
+            $banktransactionspage,
+            [
+                'path' => request()->url(),
+                'query' => request()->except('banktransactions') 
+            ]
+        );
+        $banktransactionsPaginator->appends(request()->except('banktransactions'))->setPageName('banktransactions');
+
+
+        $phonetransactions = $cachedData['phonetransactions']->slice(($phonetransactionspage - 1) * $perPage, $perPage);
+        $phonetransactionsPaginator = new LengthAwarePaginator(
+            $phonetransactions,
+            $cachedData['phonetransactions']->count(),
+            $perPage,
+            $phonetransactionspage,
+            
+            [
+                'path' => request()->url(),
+                'query' => request()->except('banktransactions') 
+            ]
+        );
+        $phonetransactionsPaginator->appends(request()->except('phonetransactions'))->setPageName('phonetransactions');
+
+        $cachedData['banktransactions'] = $banktransactionsPaginator;
+        $cachedData['phonetransactions'] = $phonetransactionsPaginator;
+        $cachedData['contacts'] = $contactsPaginator;
+        $cachedData['vehicles'] = $vehiclesPaginator;
+
+        return $cachedData;
+    }
 
     private function playerInfoCache($player, $cacheKey) {
-        $vehicles = $player->vehicles()->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-        $phonetransactions = $player->phoneTransactions()->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-        $contacts = $player->contacts()->paginate(5, ['*'], 'contacts')->appends(request()->except('contacts'));
-        $banktransactions = $player->bankTransactions()->paginate(5, ['*'], 'banktransactions')->appends(request()->except('banktransactions'));
+        $vehicles = $player->vehicles()->get();
+        $phonetransactions = $player->phoneTransactions()->get();
+        $contacts = $player->contacts()->get();
+        $banktransactions = $player->bankTransactions()->get();
         $cachedData = compact('player', 'vehicles', 'phonetransactions', 'contacts', 'banktransactions');
         Cache::put($cacheKey ,$cachedData, now()->addMinutes(10));
         return $cachedData;

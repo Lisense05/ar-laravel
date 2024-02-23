@@ -514,7 +514,11 @@
                     }, 1000);
 
                 } else if (inputValue.length === 0) {
-                    window.location.href = "{{ route('playerInfo', $player->identifier) }}";
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(function() {
+                        window.location.href = "{{ route('playerInfo', $player->identifier) }}";
+                    }, 1000);
+                    
                 }
 
 
