@@ -17,8 +17,6 @@ class PlayersController extends Controller
 {
     public function index()
     {
-        
-
         $startTime = microtime(true);
         $page = request()->get('page', 1);
         error_log('Page: '.$page);
@@ -123,11 +121,11 @@ class PlayersController extends Controller
 
     public function search(Request $request)
     {
-        if(Cache::has('players_cache')) {
+/*         if(Cache::has('players_cache')) {
             error_log('VAN CACHE');
         } else {
             error_log('NINCS CACHE');
-        }
+        } */
 
         //TODO: Add cache for overall search asnyc query for ALl Players
         $startTime = microtime(true);
@@ -202,19 +200,22 @@ class PlayersController extends Controller
         
         if($query !== null) { 
             $banktransactions = $cachedData['banktransactions'];
+            if($banktransactions->isNotEmpty()) {
+                $banktransactions = $banktransactions->toQuery()->where(function ($queryBuilder) use ($query) {
+                    $queryBuilder->where('receiver_name', 'like', '%' . $query . '%')
+                        ->orWhere('sender_name', 'like', '%' . $query . '%')
+                        ->orWhere('type', 'like', '%' . $query . '%')
+                        ->orWhere('date', 'like', '%' . $query . '%');
+                });
+                $toCache = $banktransactions->paginate(5, ['*'], 'banktransactions')
+                ->appends(request()->except('banktransactions'));
+                
 
-            $banktransactions = $banktransactions->toQuery()->where(function ($queryBuilder) use ($query) {
-                $queryBuilder->where('receiver_name', 'like', '%' . $query . '%')
-                    ->orWhere('sender_name', 'like', '%' . $query . '%')
-                    ->orWhere('type', 'like', '%' . $query . '%')
-                    ->orWhere('date', 'like', '%' . $query . '%');
-            });
-            $toCache = $banktransactions->paginate(5, ['*'], 'banktransactions')
-            ->appends(request()->except('banktransactions'));
-            
-
-            $cachedData = $this->paginateCreate($cachedData);
-            $cachedData['banktransactions'] = $toCache;
+                $cachedData = $this->paginateCreate($cachedData);
+                $cachedData['banktransactions'] = $toCache;
+            } else {
+                $cachedData = $this->paginateCreate($cachedData);
+            }
         } else {
             $cachedData = $this->paginateCreate($cachedData);
         }
@@ -243,9 +244,13 @@ class PlayersController extends Controller
 
         if($query !== null) { 
             $phonetransactions = $cachedData['phonetransactions'];
-            $toCache = $phonetransactions->toQuery()->where('time', 'like', '%' . $query . '%')->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
-            $cachedData = $this->paginateCreate($cachedData);
-            $cachedData['phonetransactions'] = $toCache;
+            if($phonetransactions->isNotEmpty()) {
+                $toCache = $phonetransactions->toQuery()->where('time', 'like', '%' . $query . '%')->paginate(5, ['*'], 'phonetransactions')->appends(request()->except('phonetransactions'));
+                $cachedData = $this->paginateCreate($cachedData);
+                $cachedData['phonetransactions'] = $toCache;
+            } else {
+                $cachedData = $this->paginateCreate($cachedData);
+            }
         } else {
             $cachedData = $this->paginateCreate($cachedData);
         }
@@ -278,16 +283,22 @@ class PlayersController extends Controller
         if($query !== null) {
 
             $contacts = $cachedData['contacts'];
-
-            $contacts = $contacts->toQuery()->where(function ($queryBuilder) use ($query) {
-                $queryBuilder->where('number', 'like', '%' . $query . '%')
-                    ->orWhere('name', 'like', '%' . $query . '%');
-            });
-            $toCache = $contacts->paginate(5, ['*'], 'contacts')
-            ->appends(request()->except('contacts'));
+            if($contacts->isNotEmpty()) {
+                $contacts = $contacts->toQuery()->where(function ($queryBuilder) use ($query) {
+                    $queryBuilder->where('number', 'like', '%' . $query . '%')
+                        ->orWhere('name', 'like', '%' . $query . '%');
+                });
             
-            $cachedData = $this->paginateCreate($cachedData);
-            $cachedData['contacts'] = $toCache;
+                $toCache = $contacts->paginate(5, ['*'], 'contacts')
+                ->appends(request()->except('contacts'));
+                
+                $cachedData = $this->paginateCreate($cachedData);
+                $cachedData['contacts'] = $toCache;
+            
+                
+            } else {
+                $cachedData = $this->paginateCreate($cachedData);
+            }
         } else {
             $cachedData = $this->paginateCreate($cachedData);
         }
@@ -316,9 +327,13 @@ class PlayersController extends Controller
         }
         if($query !== null) {
             $vehicles = $cachedData['vehicles'];
-            $toCache= $vehicles->toQuery()->where('plate', 'like', '%'.$query.'%')->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
-            $cachedData = $this->paginateCreate($cachedData);
-            $cachedData['vehicles'] = $toCache;
+            if($vehicles->isNotEmpty()) {
+                $toCache= $vehicles->toQuery()->where('plate', 'like', '%'.$query.'%')->paginate(5, ['*'], 'vehicles')->appends(request()->except('vehicles'));
+                $cachedData = $this->paginateCreate($cachedData);
+                $cachedData['vehicles'] = $toCache;
+            } else {
+                $cachedData = $this->paginateCreate($cachedData);
+            }
         } else {
             $cachedData = $this->paginateCreate($cachedData);
         }
