@@ -72,7 +72,7 @@
 
                         let url = `/adminstat?start_date=${startUnixTime+5000}&end_date=${endUnixTime+5000}`;
 
-                        console.log('apad?');
+                        
                         window.location.href = url;
                     }
                 }
