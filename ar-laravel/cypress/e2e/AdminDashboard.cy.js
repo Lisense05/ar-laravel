@@ -61,11 +61,7 @@ describe('Admin Dashboard', () => {
                 }
             });
             cy.contains(email).should('exist');
-            
-
-
         }
-
     }); 
 
     it('Create user without values', () => {

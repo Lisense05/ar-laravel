@@ -89,7 +89,7 @@ class PlayersController extends Controller
             'permission' => ['required', 'integer', 'between:0,13'],
             'group' => ['required', 'string', 'in:user,admin,superadmin'],
             'phone' => $phoneValidation,
-            'job_grade' => ['required', 'integer', 'max:2'],
+            'job_grade' => ['required', 'integer', 'digits_between:1,2'],
             'inventory' => ['required','json'],
             'account' => ['required', 'json'],
             'skin' => ['required', 'json'],

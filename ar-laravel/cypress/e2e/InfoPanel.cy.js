@@ -6,7 +6,7 @@ describe('InfoPanel', () => {
     });
     
 
-/*     it('InfoPanel loaded well', () => {
+    it('InfoPanel loaded well', () => {
         cy.get('#players-info').should('be.visible');
         cy.get('#players-info').within(() => {
             cy.get('input[name="name"]').should('be.visible');
@@ -107,6 +107,6 @@ describe('InfoPanel', () => {
         cy.get('#skinError').contains('valid JSON string').should('be.visible');
 
 
-    }); */
+    });
 
 });

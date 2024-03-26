@@ -78,7 +78,6 @@
                 }
             });
 
-
             var chartData = {!! json_encode($chartData) !!};
 
             var dates = Object.keys(chartData);

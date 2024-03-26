@@ -248,6 +248,9 @@
             
             document.querySelectorAll('#players-table tr').forEach(row => {
                 row.addEventListener('click', function() {
+                    if (event.target.classList.contains('inventory-cell') || event.target.parentElement.classList.contains('inventory-cell')) {
+                        return; 
+                    }
                     var playerId = this.dataset.identy;
             
                     window.location.href = `/players/${playerId}`;
@@ -261,6 +264,7 @@
 
                     if (event.target.tagName.toLowerCase() === 'textarea') {
                         event.stopPropagation();
+                        
                         return;
                     }
 
