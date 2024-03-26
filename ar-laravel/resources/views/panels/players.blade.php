@@ -1,5 +1,7 @@
 <x-app-layout>
-    <h2 class="text-3xl font-bold mt-4 mb-2 text-gray-800 dark:text-white flex justify-center">Page loaded from ({{$fromCache }}) {{$executionTime}} in MS</h2>
+    
+    <h2 class="text-3xl font-bold mt-4 mb-2 text-gray-800 dark:text-white flex justify-center">Page loaded from
+        ({{ $fromCache }}) {{ $executionTime }} in MS</h2>
     <div class="flex flex-col">
         <div class="-m-1.5 overflow-x-auto">
             <div class="p-1.5 min-w-full inline-block align-middle">
@@ -32,7 +34,17 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                        Accounts
+                                        Money
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Bank
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Black money
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Group
@@ -42,10 +54,19 @@
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Permission
                                     </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Position
+                                    </th>
 
                                     <th scope="col"
                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                         Inventory
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Skin
                                     </th>
 
                                     <th scope="col"
@@ -75,18 +96,59 @@
                                         Vehicles
                                     </th>
 
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Deposits
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Withdraws
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Transfers
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Contacts
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Lotteries
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Phone Transcation Sent
+                                    </th>
+
+                                    <th scope="col"
+                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                        Phone Transcation Received
+                                    </th>
+
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="players-tableBody">
                                 @foreach ($players as $player)
-                                    <tr class ="hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        
+                                    <tr class ="hover:bg-gray-50 dark:hover:bg-gray-600" data-identy={{$player->identifier}}>
+
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 player-identifier">
                                             {{ $player->identifier }}</td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-accounts">
-                                            {{ $player->accounts }}
+                                            {{ Number::currency($player->accounts['money'], 'USD') }}
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-accounts">
+                                            {{ Number::currency($player->accounts['bank'], 'USD') }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-accounts">
+                                            {{ Number::currency($player->accounts['black_money'], 'USD') }}
                                         </td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-group">
@@ -96,7 +158,15 @@
                                             {{ $player->permission_level }}</td>
                                         <td
                                             class="inventory-cell px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 max-w-md overflow-x-scroll player-inventory">
+                                            {{ $player->position }}</td>
+                                        
+                                        <td
+                                            class="inventory-cell px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 max-w-md overflow-x-scroll player-inventory">
                                             {{ $player->inventory }}</td>
+
+                                        <td
+                                            class="inventory-cell px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 max-w-md overflow-x-scroll player-inventory">
+                                            {{ $player->skin }}</td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-job">
                                             {{ $player->job }}</td>
@@ -115,35 +185,90 @@
                                             {{ $player->phone }}</td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
-                                            {{ $player->vehicles_count }}</td>
+                                            {{ $player->vehicles->count() }}</td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['deposit'] }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['withdraw'] }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ Cache::get('transaction_counts_' . $player->identifier)['transfer'] }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ $player->contacts->count() }}</td>
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            {{ $player->lottery->count() }}</td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            Count:
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['from']['count'] }}<br>
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['from']['amount_sum'] }}
+                                        </td>
+
+                                        <td
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 player-phone">
+                                            Count:
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['to']['count'] }}<br>
+                                            {{ Cache::get('phone_transaction_' . $player->identifier)['to']['amount_sum'] }}
+                                        </td>
 
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                         
+
                     </div>
                     <div class="py-5 px-4">
                         {{ $players->appends(['query' => request()->input('query')])->links() }}
                     </div>
+                    
                 </div>
             </div>
         </div>
+        
     </div>
+
 
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            
+            document.querySelectorAll('#players-table tr').forEach(row => {
+                row.addEventListener('click', function() {
+                    if (event.target.classList.contains('inventory-cell') || event.target.parentElement.classList.contains('inventory-cell')) {
+                        return; 
+                    }
+                    var playerId = this.dataset.identy;
+            
+                    window.location.href = `/players/${playerId}`;
+                });
+            });
             let timeoutId;
             var inventoryCells = document.querySelectorAll('.inventory-cell');
             inventoryCells.forEach(function(cell) {
 
                 cell.addEventListener('click', function() {
 
+                    if (event.target.tagName.toLowerCase() === 'textarea') {
+                        event.stopPropagation();
+                        
+                        return;
+                    }
+
                     var existingTextarea = cell.querySelector('textarea');
-
-
                     if (existingTextarea) {
                         cell.textContent = existingTextarea.value.trim();
                         return;
@@ -185,7 +310,7 @@
             });
 
             var searchInput = document.getElementById('table-search-users');
-            var playersTable = document.getElementById('players-tableBody');
+
 
             searchInput.addEventListener('input', function() {
                 var inputValue = searchInput.value.trim();
@@ -208,7 +333,7 @@
 
             searchInput.addEventListener('keyup', function(event) {
                 if (event.key === 'Backspace' && searchInput.value.trim() === '') {
-                    window.location.href = '/players'; 
+                    window.location.href = '/players';
                 }
             });
 

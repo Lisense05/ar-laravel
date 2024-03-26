@@ -23,3 +23,21 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+// In cypress/support/commands.js
+
+Cypress.Commands.add('login', (email, password) => {
+    cy.session([email, password], () =>
+    {
+        cy.visit('/login');
+        cy.get('input[name=email]').type(email);
+        cy.get('input[name=password]').type(password);
+        cy.get('form').submit();
+    });
+});
+
+
+
+Cypress.Commands.add('dbreset', () => {
+    cy.exec('php artisan migrate:refresh && php artisan db:seed');
+});

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminStatController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\ProfileController;
@@ -26,7 +27,7 @@ Route::get('/', function () {
 });
 
 Route::get('/home', [HomeController::class, 'index'])
-    ->middleware(['auth', 'verified', 'cache.playercount'])
+    ->middleware(['auth', 'verified'])
     ->name('home');
 
 Route::middleware('auth')->group(function () {
@@ -39,8 +40,21 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-user', [AdminController::class, 'delete'])->middleware('is_admin')->name('delete.user');
     Route::post('/create-user', [AdminController::class, 'store'])->middleware('is_admin')->name('create.user');
 
-    Route::get('/players', [PlayersController::class, 'index'])->middleware('cache.playercount')->name('players');
+    Route::get('/players', [PlayersController::class, 'index'])->name('players');
     Route::get('/search', [PlayersController::class, 'search']);
+
+    Route::get('/players/{playerId}', [PlayersController::class, 'getPlayerInfo'])->name('playerInfo');
+
+    Route::get('/players/{playerId}/search-vehicles', [PlayersController::class, 'searchPlayerVehicles'])->name('searchPlayerVehicles');
+    Route::get('/players/{playerId}/search-contacts', [PlayersController::class, 'searchPlayerContacts'])->name('searchPlayerContacts');
+    Route::get('/players/{playerId}/search-phone', [PlayersController::class, 'searchPlayerPhoneTransactions'])->name('searchPlayerPhoneTransactions');
+    Route::get('/players/{playerId}/search-bank', [PlayersController::class, 'searchPlayerBankTransactions'])->name('searchPlayerBankTransactions');
+
+    Route::put('/players/{playerId}', [PlayersController::class, 'update'])->name('players.update');
+
+    Route::get('/adminstat', [AdminStatController::class, 'index'])->name('adminstat');
+
+    
     
 });
 

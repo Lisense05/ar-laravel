@@ -29,17 +29,24 @@ describe('Bad login', () => {
 })
 
 describe('Logout', () => {
-    it('Logout', () => {
-      cy.visit('/login')
-      cy.get('input[name=email]').type('testuser@gmail.com')
-      cy.get('input[name=password]').type('testuser')
-      cy.get('button[type=submit]').eq(1).click()
-      cy.get('button[id=profileButton').click()
-      cy.get('a[id=logout').click()
-      cy.location('pathname').should('equal', '/');
-      
-  })
+  it('Logout', () => {
+    cy.visit('/login');
+    cy.get('input[name=email]').type('testuser@gmail.com');
+    cy.get('input[name=password]').type('testuser');
+    cy.get('button[type=submit]').eq(1).click();
+
+
+    cy.get('#profileButton').should('be.visible').click();
+    cy.wait(1000);
+    
+    cy.get('#logout').should('be.visible').submit();
+
+    
+    cy.location('pathname').should('equal', '/');
+  });
 });
+
+
 
 describe('Admin permssion', () => {
   it('Admin permission as user', () => {
